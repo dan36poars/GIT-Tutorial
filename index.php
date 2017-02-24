@@ -1,3 +1,7 @@
+<?php 
+require('./_app/config.inc.php');
+$session = new Session;
+ ?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -6,6 +10,10 @@
 </head>
 <body>
 <div class="main">
+<?php 
+$login = new Login(1);
+var_dump($login);
+ ?>
 <form name="PostForm" method="post" action="" enctype="multipart/formdata">
 	<label>
 		<span>Email:</span>
