@@ -1,6 +1,6 @@
 <?php 
 require('./_app/config.inc.php');
-$session = new Session;
+//$session = new Session;
  ?>
 <!DOCTYPE html>
 <html lang="pt-br">

@@ -116,7 +116,45 @@ class Login {
 	 * @return void
 	 */
 	private function setLogin() {
-		
+		if (!$this->Email || !$this->Password || !Check::validaEmail($this->Email)) {
+			$this->Error = ['Informe E-mail e Senha. Não deixe campos em branco', WS_ALERT];
+			$this->Result = false;
+		}elseif (!$this->checkUser()) {
+			$this->Error = ['Usuario não está cadastrado no sistema', WS_ALERT];
+			$this->Result = false;
+		}else{
+			$this->execute();
+		}
+	}
+
+
+	/**
+	 * checkUser
+	 * @return void
+	 */
+	private function checkUser() {
+		$user = new Read;
+		$user->exeRead("bd_users", "WHERE bd_email = :email AND bd_pass = :pass","email={$this->Email}&pass={$this->Password}");
+		if ($user->getResult()) {
+			$this->Result = $user->getResult()[0];
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+
+	/**
+	 * execute
+	 * @return void
+	 */
+	private function execute() {
+		if (!session_id()) {
+			session_start();
+		}
+		$_SESSION['userlogin'] = $this->Result;
+		$this->Error = [WS_ACCEPT, "Ola {$_SESSION['userlogin']['db_name']} {$_SESSION['userlogin']['db_last_name']} seja bem vindo, Aguarde redirecionamento!"];
+		$this->Result = true;
 	}
 
 	
