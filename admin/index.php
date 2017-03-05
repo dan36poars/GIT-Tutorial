@@ -8,7 +8,7 @@ $login = new Login(2);
 <html lang="pt-br">
 <head>
 	<meta charset="UTF-8">
-	<title>-- Screen For git hub --</title>
+	<title>-- Login for the System Painel --</title>
 </head>
 <body>
 <div class="main">
