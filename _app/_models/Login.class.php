@@ -64,13 +64,26 @@ class Login {
 		$this->Level = (int) $Level;		
 	}
 
+	/**
+	 * exeLogin
+	 * @param $Data
+	 * @return void
+	 */
+	public function exeLogin(array $Data) {
+		$this->Email = (string) strip_tags(trim($Data['email']));
+		$this->Password = (string) strip_tags(trim($Data['pass']));
+		$this->setLogin();
+
+	}
 
 	/**
 	 * checkLogin
+	 * Verifica se o usuario esta logado no 
+	 * sistema  
 	 * @return boolean
 	 */
 	public function checkLogin() {
-		if (empty($_SESSION['userlogin']) || $_SESSION['userlogin']['userlevel'] < $this->Level) {
+		if (empty($_SESSION['userlogin']) || $_SESSION['userlogin']['bd_level'] < $this->Level) {
 			unset($_SESSION['userlogin']);
 			return false;
 		}else{
@@ -79,17 +92,6 @@ class Login {
 	}
 
 
-	/**
-	 * exeLogin
-	 * @param $Data
-	 * @return void
-	 */
-	public function exeLogin(array $Data) {
-		$this->Email = (string) strip_tags(trim($Data['name']));
-		$this->Password = (string) strip_tags(trim($Data['pass']));
-		$this->setLogin();
-
-	}
 
 
 	/**
@@ -117,10 +119,13 @@ class Login {
 	 */
 	private function setLogin() {
 		if (!$this->Email || !$this->Password || !Check::validaEmail($this->Email)) {
-			$this->Error = ['Informe E-mail e Senha. Não deixe campos em branco', WS_ALERT];
+			$this->Error = [WS_INFOR, 'Informe E-mail e Senha. Não deixe campos em branco'];
+			$this->Result = false;			
+		}elseif(!$this->checkUser()) {
+			$this->Error = [WS_ALERT, 'Usuario não está cadastrado no sistema'];
 			$this->Result = false;
-		}elseif (!$this->checkUser()) {
-			$this->Error = ['Usuario não está cadastrado no sistema', WS_ALERT];
+		}elseif($this->Result['bd_level'] < $this->Level){
+			$this->Error = [WS_ERROR, "Desculpe {$this->Result['db_name']}, você não tem permissão para acessar esta área!"];
 			$this->Result = false;
 		}else{
 			$this->execute();
@@ -133,6 +138,7 @@ class Login {
 	 * @return void
 	 */
 	private function checkUser() {
+		$this->Password = md5($this->Password);
 		$user = new Read;
 		$user->exeRead("bd_users", "WHERE bd_email = :email AND bd_pass = :pass","email={$this->Email}&pass={$this->Password}");
 		if ($user->getResult()) {
@@ -157,6 +163,5 @@ class Login {
 		$this->Result = true;
 	}
 
-	
 } // END Login 
 ?>
