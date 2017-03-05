@@ -1,4 +1,4 @@
-Git Tutorial Version 1.0
+User Class Login v1.0
 ------------------------
 
 User login class for a painel.
